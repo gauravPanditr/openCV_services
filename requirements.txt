@@ -7,3 +7,5 @@ pillow
 imagehash
 scikit-image
 requests
+pymongo==4.17.0
+python-dotenv
