@@ -1,21 +1,13 @@
-import os
 from pymongo import MongoClient
-import gridfs
 from dotenv import load_dotenv
-
+import os
 
 load_dotenv()
 
+client = MongoClient(os.getenv("MONGO_URI"))
+db = client[os.getenv("MONGO_DB")]
 
-MONGO_URI = os.getenv("MONGO_URI")
-MONGO_DB = os.getenv("MONGO_DB")
-GRIDFS_BUCKET = os.getenv("GRIDFS_BUCKET")
+photos = db["accident_photos"]
 
-
-client = MongoClient(MONGO_URI)
-db = client[MONGO_DB]
-
-fs = gridfs.GridFS(db)
-
-
-col = db[GRIDFS_BUCKET]
+def check_db():
+    client.admin.command("ping")

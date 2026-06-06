@@ -1,15 +1,28 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, UploadFile
 
-from src.analyzer import analyze_image
-app = FastAPI(title="OpenCV Services")
+from src.config.db import check_db
+from src.service.image_service import analyze_image
+from src.model.response import ImageAnalysisResponse
 
+app = FastAPI()
 
-@app.get("/")
-def home():
-    return {"status": "OpenCV Service Running"}
+@app.on_event("startup")
+def startup():
 
+    check_db()
 
-@app.post("/analyze")
-async def analyze(file: UploadFile = File(...)):
-    result = await analyze_image(file)
-    return result
+    print("MongoDB Connected")
+
+@app.post(
+    "/analyze",
+    response_model=ImageAnalysisResponse
+)
+async def analyze(
+    file: UploadFile,
+    claim_id: str
+):
+
+    return await analyze_image(
+        file,
+        claim_id
+    )
